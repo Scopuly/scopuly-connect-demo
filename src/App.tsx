@@ -7,6 +7,7 @@ import {
 import {
   DOCS,
   EXTENSION,
+  MAX_FEE_XLM,
   NETWORKS,
   WALLETCONNECT_CONFIGURED,
   type NetworkId,
@@ -432,7 +433,7 @@ export default function App({ controller }: { controller: DemoController }) {
               </strong>
               <span>
                 {mainnet
-                  ? "This demo sends 1 real XLM back to your own account. A real network fee is deducted. Nothing is submitted automatically."
+                  ? `This demo sends ${NETWORKS.mainnet.demoAmount} real XLM back to your own account. A real network fee is deducted. Nothing is submitted automatically.`
                   : "Free test funds, explicit wallet approvals, and a separate submit step. No secret keys. No automatic payments."}
               </span>
             </div>
@@ -645,7 +646,7 @@ export default function App({ controller }: { controller: DemoController }) {
               <Step
                 number={3}
                 title="Prepare a self-payment"
-                caption="1 XLM to your own address. Only the network fee leaves your balance."
+                caption={`${NETWORKS[state.network].demoAmount} XLM to your own address. Only the network fee leaves your balance.`}
                 active={!!account && !prepared}
                 done={!!prepared}
               >
@@ -693,7 +694,7 @@ export default function App({ controller }: { controller: DemoController }) {
                         <dd>Payment to self</dd>
                       </div>
                       <div>
-                        <dt>Destination</dt>
+                        <dt>Destination (your own account)</dt>
                         <dd title={prepared.address}>
                           {short(prepared.address)}
                         </dd>
@@ -701,12 +702,13 @@ export default function App({ controller }: { controller: DemoController }) {
                       <div>
                         <dt>Amount</dt>
                         <dd>
-                          1 XLM <span>(stays in your account)</span>
+                          {NETWORKS[state.network].demoAmount} XLM{" "}
+                          <span>(stays in your account)</span>
                         </dd>
                       </div>
                       <div>
                         <dt>Maximum fee</dt>
-                        <dd>0.00001 XLM</dd>
+                        <dd>{MAX_FEE_XLM} XLM</dd>
                       </div>
                       <div>
                         <dt>Memo</dt>
@@ -972,10 +974,11 @@ export default function App({ controller }: { controller: DemoController }) {
                 </summary>
                 <p>
                   On Testnet, funds have no monetary value. On Mainnet, the demo
-                  sends 1 XLM back to your own account and deducts a real
-                  network fee, capped here at 0.00001 XLM. Signing does not
-                  submit anything: you must press the separate submit button.
-                  Ledger-included failures may also incur a fee.
+                  sends {NETWORKS.mainnet.demoAmount} XLM back to your own
+                  account and deducts a real network fee, capped here at{" "}
+                  {MAX_FEE_XLM} XLM. Signing does not submit anything: you must
+                  press the separate submit button. Ledger-included failures may
+                  also incur a fee.
                 </p>
               </details>
               <details>

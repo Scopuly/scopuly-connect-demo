@@ -80,6 +80,20 @@ describe("demo flow", () => {
     expect(demo.getSnapshot().prepared).toBeNull();
     demo.acknowledgeMainnet(true);
     await demo.prepare();
+    expect(demo.getSnapshot().notice?.message).toContain(
+      "0.01 XLM back to the same account",
+    );
+    expect(
+      demo
+        .getSnapshot()
+        .traces.find((entry) => entry.method === "TransactionBuilder.build()")
+        ?.request,
+    ).toMatchObject({
+      source: key.publicKey(),
+      destination: key.publicKey(),
+      amount: "0.01",
+      feeStroops: "1000",
+    });
     await demo.sign();
     await demo.submit();
     expect(api.submit).toHaveBeenCalledWith(

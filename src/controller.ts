@@ -1,4 +1,4 @@
-import { NETWORKS, type NetworkId } from "./config";
+import { MAX_FEE_STROOPS, NETWORKS, type NetworkId } from "./config";
 import { DemoError, explainError } from "./errors";
 import {
   horizon,
@@ -423,8 +423,8 @@ export function createController(
             source: address,
             destination: address,
             asset: "XLM",
-            amount: "1",
-            feeStroops: "100",
+            amount: NETWORKS[network].demoAmount,
+            feeStroops: MAX_FEE_STROOPS,
             memo: "Scopuly connect demo",
             timeoutSeconds: 300,
           },
@@ -434,8 +434,7 @@ export function createController(
           prepared,
           notice: {
             tone: "info",
-            message:
-              "Review the transaction below. It sends 1 XLM back to the same account; only the network fee reduces your balance.",
+            message: `Review the transaction below. It sends ${NETWORKS[network].demoAmount} XLM back to the same account; only the network fee reduces your balance.`,
           },
         });
       });

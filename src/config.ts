@@ -5,6 +5,7 @@ export const NETWORKS = {
   testnet: {
     id: "testnet",
     label: "Testnet",
+    demoAmount: "1",
     passphrase: TESTNET,
     horizon: "https://horizon-testnet.stellar.org",
     chain: "stellar:testnet",
@@ -13,6 +14,7 @@ export const NETWORKS = {
   mainnet: {
     id: "mainnet",
     label: "Mainnet",
+    demoAmount: "0.01",
     passphrase: MAINNET,
     horizon: "https://horizon.stellar.org",
     chain: "stellar:pubnet",
@@ -20,6 +22,8 @@ export const NETWORKS = {
   },
 } as const;
 export const FRIENDBOT = "https://friendbot.stellar.org";
+export const MAX_FEE_STROOPS = "1000";
+export const MAX_FEE_XLM = "0.0001";
 export const PROJECT_ID = (
   import.meta.env.VITE_WALLETCONNECT_PROJECT_ID ?? ""
 ).trim();

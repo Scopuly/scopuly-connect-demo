@@ -2,7 +2,7 @@
 
 A small React + TypeScript application that makes a Stellar wallet integration inspectable, from account access to ledger confirmation.
 
-**Testnet is the default. Mainnet is optional and uses real XLM for fees.** The demo sends **1 XLM to the connected account itself**, with a maximum fee of **100 stroops (0.00001 XLM)**. It never chooses an external recipient, buys assets, or submits automatically.
+**Testnet is the default. Mainnet is optional and uses real XLM for fees.** The demo sends **0.01 XLM on Mainnet or 1 test XLM on Testnet back to your own connected account**. The destination is always your own address, not another recipient. The payment amount stays in your account; only the network fee is deducted, up to **1000 stroops (0.0001 XLM)**. Nothing is submitted automatically.
 
 ## Quick start
 
@@ -28,12 +28,6 @@ Alternatively, open the deployed HTTPS demo inside Scopuly's in-app browser. The
 
 No seed phrase or secret key should ever be entered in this application.
 
-### Appearance
-
-The topbar contains the Testnet/Mainnet selector and a light/dark theme toggle. The initial theme follows the device preference; an explicit choice is remembered locally under `scopuly-connect-lab:theme`. Changing the theme does not disconnect the wallet or reset the transaction. The hero diagram is an illustration of the connection flow, not live session data.
-
-Baloo 2 is bundled locally. The supplied Scopuly logos switch with the theme; no external font service is used.
-
 ## Walk through the entire flow
 
 1. **Connect** — request the public address and validate the wallet's selected network.
@@ -42,7 +36,7 @@ Baloo 2 is bundled locally. The supplied Scopuly logos switch with the theme; no
 4. **Sign** — request approval in Scopuly. Verify that the returned transaction body is unchanged and that its Ed25519 signature is valid for the requested account and network. No submission happens here.
 5. **Submit** — explicitly submit the signed envelope to the matching Horizon. Inspect the transaction hash, ledger result, and network-specific explorer link. Refresh the balance afterward to see the fee.
 
-The developer inspector exposes abbreviated integration code, real request parameters, returned data, and an in-memory activity log. TypeScript and JSON use syntax highlighting and line numbers, with palettes for both themes. The Copy button copies only the original text, without line numbers or markup. It never displays simulated successes in the production app. Automated tests use isolated mocks.
+The developer inspector shows integration code, request parameters, responses, and an activity log so you can follow each step.
 
 ## Three connection methods
 
@@ -104,9 +98,9 @@ This snippet is abbreviated. The working adapter, network checks, signature veri
 - Changing the network or connection method disconnects the current session and discards prepared/signed XDR.
 - The wallet network must match the chosen environment before preparing, signing, and submitting.
 - An explicit checkbox acknowledges real network fees. Signing and submission are separate buttons.
-- The amount and destination cannot be edited: this is a **1 XLM self-payment**, not a general transfer form. The amount remains in the same account; a successfully submitted transaction incurs a network fee. Failed transactions included in a ledger can also incur a fee.
+- This is a **0.01 XLM payment back to your own account**, not a transfer to someone else. The amount and destination are fixed. The payment amount stays in your account; the network fee reduces your balance. Failed transactions included in a ledger can also incur a fee.
 - Transactions expire after five minutes. Account sequence changes require a fresh transaction and signature.
-- The demo does not raise fees automatically. If the network requires more than 100 stroops, the request can fail; inspect the returned result.
+- The maximum fee is **1000 stroops (0.0001 XLM)**. The demo does not increase it automatically. If the network requires a higher fee, inspect the returned error before trying again.
 - An ambiguous submission result is treated as **unknown**, not failed. Check the original hash instead of submitting again. A temporary Horizon `404` is not proof of failure.
 - Use a normal single-signature account. Multisignature coordination, custom signer thresholds, fee bumps, and production payment recovery are outside this example's scope.
 
@@ -121,11 +115,7 @@ The locked dependency audit on September 29, 2026 reported 19 findings (13 low, 
 ```text
 src/
   App.tsx             Step-by-step UI and live inspector
-  BrandLogo.tsx       Original Scopuly artwork for each theme
-  HeroFlow.tsx        Clearly labeled connection-flow illustration
-  SyntaxCode.tsx       Theme-aware TypeScript and JSON syntax highlighting
   SiteFooter.tsx       Scopuly apps, developer resources, and open-source links
-  theme.ts            Device preference and persistent theme selection
   config.ts           Fixed Testnet/Mainnet endpoints and public configuration
   controller.ts       Flow, invalidation, and duplicate-submission guards
   wallet.ts           SWK, direct provider, and WalletConnect adapters
@@ -134,9 +124,6 @@ src/
   snippets.ts         Abbreviated examples displayed in the inspector
   *.test.ts           Unit and flow tests
 test/e2e/             Isolated browser tests with disposable mock signing keys
-public/scopuly.svg    Scopuly brand mark
-public/brand/         Original light/dark Scopuly logos
-public/fonts/         Baloo 2 font files and SIL Open Font License
 ```
 
 ## Checks
@@ -147,9 +134,9 @@ npx playwright install chromium
 npm run test:e2e      # Browser tests with mocked providers and Horizon
 ```
 
-Browser tests exercise the actual SWK Scopuly module and direct provider adapter, but they **do not prove connectivity to a real signing device or a live WalletConnect session**. Both Mainnet and Testnet HTTP endpoints are intercepted. No real transactions are sent by tests.
+The browser suite covers the SWK Scopuly module, direct provider flow, network safeguards, and transaction submission using mocked wallet and Horizon responses. Tests do not send real transactions.
 
-Before publishing, manually verify:
+For end-to-end testing with your wallet:
 
 - Extension pairing and account permission, including rejection.
 - Testnet funding, signing, explicit submission, and explorer confirmation.
@@ -158,20 +145,16 @@ Before publishing, manually verify:
 - Account/network changes, disconnect, expired transactions, and cancellation.
 - Mainnet warnings and routing. Only submit a real Mainnet transaction if you explicitly intend to pay the fee.
 
-## Build and upload
-
-See [UPLOAD.md](UPLOAD.md) for the FileZilla workflow, directory layout, upload order, WalletConnect configuration, and post-deployment checks.
+## Build
 
 ```sh
 npm run build
 npm run preview
 ```
 
-Upload the **contents of `dist/`** to the desired HTTPS directory, such as `extension.scopuly.com/connect-demo/`. Assets use relative URLs, so a subdirectory works without a router or server rewrite rules. Do not overwrite an existing demo without checking its contents first.
+The production build is generated in `dist/` and can be hosted on any static HTTPS host. No backend is required.
 
-Live demo: **https://extension.scopuly.com/connect-demo/**. Source: **https://github.com/Scopuly/scopuly-connect-demo**. Running a local build does not deploy it.
-
-Do not upload `node_modules`, `.env.local`, tests, or the source folder as the hosted application. There is no backend to deploy and no npm package to publish.
+[Live demo](https://extension.scopuly.com/connect-demo/) · [Source code](https://github.com/Scopuly/scopuly-connect-demo)
 
 ## Troubleshooting
 
@@ -191,7 +174,7 @@ Do not upload `node_modules`, `.env.local`, tests, or the source folder as the h
 
 There is no application analytics or backend. The activity log stays in memory until reload and may contain public addresses and signed transaction envelopes. Copy only the data you intend to share. SWK/WalletConnect may use browser storage for their connection state; revoke sessions in Scopuly when finished.
 
-Horizon sees public account queries and submitted transactions. Friendbot sees Testnet funding requests. WalletConnect uses Reown services when configured and selected. Fonts and logos are served from the same origin as the demo. Theme preference is saved locally; no wallet addresses or transaction data are stored by the theme feature.
+Horizon sees public account queries and submitted transactions. Friendbot sees Testnet funding requests. WalletConnect uses Reown services when configured and selected.
 
 ## References
 
@@ -204,5 +187,3 @@ Horizon sees public account queries and submitted transactions. Friendbot sees T
 ## License
 
 The example code is MIT licensed. Scopuly branding remains the property of its respective owner; this example does not grant separate trademark rights.
-
-Baloo 2 by Ek Type is distributed under the SIL Open Font License 1.1; see `public/fonts/OFL.txt`.

@@ -198,6 +198,12 @@ async function connectAndPrepare(page: Page) {
     .getByRole("button", { name: "Prepare transaction", exact: false })
     .click();
   await expect(page.getByText("Maximum fee", { exact: true })).toBeVisible();
+  await expect(
+    page.locator("dd").filter({ hasText: "1 XLM (stays in your account)" }),
+  ).toBeVisible();
+  await expect(
+    page.locator("dd").filter({ hasText: "0.0001 XLM" }),
+  ).toBeVisible();
 }
 
 test("initial desktop and mobile layouts, missing provider, and WC setup", async ({
@@ -297,6 +303,15 @@ test("Mainnet has an explicit fee confirmation and the correct endpoint", async 
   await page
     .getByRole("button", { name: "Prepare transaction", exact: false })
     .click();
+  await expect(
+    page.getByText("Destination (your own account)", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator("dd").filter({ hasText: "0.01 XLM (stays in your account)" }),
+  ).toBeVisible();
+  await expect(
+    page.locator("dd").filter({ hasText: "0.0001 XLM" }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Sign with Scopuly", exact: false })
     .click();

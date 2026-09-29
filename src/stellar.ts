@@ -8,7 +8,7 @@ import {
   Transaction,
   TransactionBuilder,
 } from "@stellar/stellar-sdk/base";
-import { NETWORKS, type NetworkId } from "./config";
+import { MAX_FEE_STROOPS, NETWORKS, type NetworkId } from "./config";
 import { DemoError } from "./errors";
 
 export interface PreparedTransaction {
@@ -53,14 +53,14 @@ export function prepareTransaction(
     throw new DemoError("Horizon returned an invalid account sequence.");
   const expiresAt = Math.floor(now / 1000) + 300;
   const tx = new TransactionBuilder(new Account(address, sequence), {
-    fee: "100",
+    fee: MAX_FEE_STROOPS,
     networkPassphrase: NETWORKS[network].passphrase,
   })
     .addOperation(
       Operation.payment({
         destination: address,
         asset: Asset.native(),
-        amount: "1",
+        amount: NETWORKS[network].demoAmount,
       }),
     )
     .addMemo(Memo.text("Scopuly connect demo"))

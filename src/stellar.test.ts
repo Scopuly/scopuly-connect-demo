@@ -24,12 +24,12 @@ describe("transaction boundaries", () => {
       ) as Transaction;
       expect(tx.source).toBe(key.publicKey());
       expect(tx.sequence).toBe("43");
-      expect(tx.fee).toBe("100");
+      expect(tx.fee).toBe("1000");
       expect(tx.operations).toHaveLength(1);
       expect(tx.operations[0]).toMatchObject({
         type: "payment",
         destination: key.publicKey(),
-        amount: "1.0000000",
+        amount: network === "mainnet" ? "0.0100000" : "1.0000000",
       });
       expect(tx.timeBounds?.maxTime).toBe(String(prepared.expiresAt));
       tx.sign(key);
