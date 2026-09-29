@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f7fc" />
+    <script>
+      (() => {
+        let preference;
+        try {
+          preference = localStorage.getItem("scopuly-connect-lab:theme");
+        } catch {}
+        const theme =
+          preference === "light" || preference === "dark"
+            ? preference
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <link
+      rel="preload"
+      href="./fonts/Baloo2-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="./fonts/Baloo2-Bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta
+      name="description"
+      content="Connect Scopuly and inspect every step from transaction signing to confirmation on Stellar Testnet or Mainnet."
+    />
+    <title>Scopuly Connect Lab — Stellar Wallet Integration</title>
+    <link rel="canonical" href="https://extension.scopuly.com/connect-demo/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Scopuly" />
+    <meta
+      property="og:title"
+      content="Scopuly Connect Lab — From connect to confirmed"
+    />
+    <meta
+      property="og:description"
+      content="Explore Scopuly wallet integration with live requests, transaction signing, and submission on Stellar Testnet or Mainnet."
+    />
+    <meta
+      property="og:url"
+      content="https://extension.scopuly.com/connect-demo/"
+    />
+    <meta
+      property="og:image"
+      content="https://extension.scopuly.com/connect-demo/og-connect-lab-v1.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Scopuly Connect Lab. From connect to confirmed. Connect, review, sign, and submit on Stellar."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Scopuly Connect Lab — From connect to confirmed"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore wallet integration on Stellar Testnet and Mainnet. Every step is inspectable."
+    />
+    <meta
+      name="twitter:image"
+      content="https://extension.scopuly.com/connect-demo/og-connect-lab-v1.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Scopuly Connect Lab. From connect to confirmed. Connect, review, sign, and submit on Stellar."
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="./brand/scopuly-coin-192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="192x192"
+      href="./brand/scopuly-coin-192.png"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
